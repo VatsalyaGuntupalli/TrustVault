@@ -1,11 +1,10 @@
-FROM maven:3.9-eclipse-temurin-21 AS build
+FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
-COPY pom.xml .
-COPY src ./src
+COPY . .
 RUN mvn clean package -DskipTests
 
-FROM eclipse-temurin:21-jdk
+FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
-EXPOSE 10000
-CMD ["sh", "-c", "java -Dserver.port=${PORT} -jar app.jar"]
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
